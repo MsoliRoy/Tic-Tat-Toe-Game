@@ -61,15 +61,13 @@ class TicTacToe:
         """Check if all provided characters are the same."""
         return cell1 == cell2 == cell3 == char
 
-    def makeMove(self, location, mark):
+    def make_move(self, location, mark):
         """Make a move on the board."""
         x, y = location
-        if not isinstance(x, int) or not isinstance(y, int) or x < 1 or x > 3 or y < 1 or y > 3:
-            raise ValueError("Invalid move coordinates. Please enter valid integers within the range [1, 3].")
-        if self.board[x - 1][y - 1] != ' ':
-            raise ValueError("Selected position is already occupied. Please choose an empty position.")
-        self.board[x - 1][y - 1] = mark
-        return True if self.isGameOver() else False
+        if 1 <= x <= self.board_size and 1 <= y <= self.board_size and self.board[x - 1][y - 1] == ' ':
+            self.board[x - 1][y - 1] = mark
+            return True
+        return False
 
     def next_player(self):
         """Get the next player to make a move."""
