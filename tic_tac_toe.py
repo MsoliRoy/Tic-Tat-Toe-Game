@@ -1,17 +1,17 @@
 class TicTacToe:
+    BOARD_SIZE = 3
+
     def __init__(self):
-        self.board = [[' ' for _ in range(3)] for _ in range(3)]
+        self.board = [[' ' for _ in range(self.BOARD_SIZE)] for _ in range(self.BOARD_SIZE)]
         self.players = []
 
-    # Other methods of TicTacToe class
-    # ...
-    def drawBoard(self):
+    def draw_board(self):
         """Draw the current state of the game board."""
         for row in self.board:
             print("|".join(row))
-            print("-" * 5)
+            print("-" * (self.BOARD_SIZE * 2 - 1))
 
-    def getKey(self, letter):
+    def get_key(self, letter):
         """Generate a key representing the state of the board."""
         key = ''
         for row in self.board:
@@ -24,16 +24,16 @@ class TicTacToe:
                     key += '*'
         return key
 
-    def getPlayers(self):
+    def get_players(self):
         """Get the list of players."""
         return self.players
 
-    def getWinner(self):
+    def get_winner(self):
         """Check if there's a winner."""
         for row in self.board:
             if row[0] == row[1] == row[2] != ' ':
                 return row[0]
-        for col in range(3):
+        for col in range(self.BOARD_SIZE):
             if self.board[0][col] == self.board[1][col] == self.board[2][col] != ' ':
                 return self.board[0][col]
         if self.board[0][0] == self.board[1][1] == self.board[2][2] != ' ':
@@ -42,39 +42,39 @@ class TicTacToe:
             return self.board[0][2]
         return None
 
-    def isGameDraw(self):
+    def is_game_draw(self):
         """Check if the game is a draw."""
         for row in self.board:
             if ' ' in row:
                 return False
         return True
 
-    def isGameOver(self):
+    def is_game_over(self):
         """Check if the game is over."""
-        return self.getWinner() is not None or self.isGameDraw()
+        return self.get_winner() is not None or self.is_game_draw()
 
-    def isGameWon(self, mark):
+    def is_game_won(self, mark):
         """Check if the game is won by a specific player."""
-        return self.getWinner() == mark
+        return self.get_winner() == mark
 
-    def isSameAs(self, char, a, b, c):
+    def is_same_as(self, char, a, b, c):
         """Check if all provided characters are the same."""
         return a == b == c == char
 
-    def makeMove(self, location, mark):
+    def make_move(self, location, mark):
         """Make a move on the board."""
         x, y = location
-        if 1 <= x <= 3 and 1 <= y <= 3 and self.board[x - 1][y - 1] == ' ':
+        if 1 <= x <= self.BOARD_SIZE and 1 <= y <= self.BOARD_SIZE and self.board[x - 1][y - 1] == ' ':
             self.board[x - 1][y - 1] = mark
             return True
         return False
 
-    def next(self):
+    def next_player(self):
         """Get the next player to make a move."""
         count = sum(row.count(' ') for row in self.board)
         return self.players[count % 2]
 
-    def setPlayers(self, player1, player2):
+    def set_players(self, player1, player2):
         """Set the players for the game."""
         self.players = [player1, player2]
 
@@ -82,14 +82,14 @@ class TicTacToe:
 if __name__ == "__main__":
     game = TicTacToe()
     # Play the game
-    while not game.isGameOver():
-        currentPlayer = game.next()
-        move = currentPlayer.makeMove(game.board)
-        game.makeMove(move, currentPlayer.letter)
-        game.drawBoard()
+    while not game.is_game_over():
+        current_player = game.next_player()
+        move = current_player.make_move(game.board)
+        game.make_move(move, current_player.letter)
+        game.draw_board()
 
     # Print the result
-    winner = game.getWinner()
+    winner = game.get_winner()
     if winner:
         print(f"Player {winner} wins!")
     else:
