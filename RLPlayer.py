@@ -1,14 +1,50 @@
-class RLPlayer:
-    def __init__(self, letter):
-        self.letter = letter
-        self.mode = TRAINING_MODE  # Assuming TRAINING_MODE is defined
-        self.learning_rate = 0.1  # Initial values
-        self.discount_rate = 0.2
-        self.epsilon = 0.3
-        self.previous_board = None
-        self.value_function = {}
+class RLPlayer(Player):
+    def __init__(self, letter, alpha, gamma):
+        super().__init__(letter, PlayerType.RL_AGENT)
+        self.alpha = alpha  # Learning rate
+        self.gamma = gamma  # Discount rate
+        self.valueFunction = {}  # Dictionary to store state values
 
-    def make_move(self, board):
+    def makeMove(self, board):
+        if self.mode == TRAINING_MODE:
+            n = random.random()
+            if n < self.epsilon:
+                any_move = random.choice(board.remaining_moves)
+                move_legal = board.makeMove(any_move, self.letter)
+                if not move_legal:
+                    print('*** WARNING ILLEGAL MOVE BY RL ***')
+                else:
+                    self.rewardState(board)
+                    self.previousBoard = copy.deepcopy(board)
+            else:
+                self.getRLMove(board)
+        else:
+            self.getRLMove(board)
+
+    def rewardState(self, board):
+        key = board.getKey(self.letter)  # Current board state key
+        reward = self.getReward(board)  # Get reward for current board state
+
+        if self.previousBoard is not None:
+            prevKey = self.previousBoard.getKey(self.letter)  # Previous board state key
+            valuePrev = self.valueOfState(prevKey)  # Value of previous state
+            valueCurrent = self.valueOfState(key)  # Value of current state
+            self.valueFunction[prevKey] = valuePrev + self.alpha * (
+                        reward + (self.gamma * valueCurrent) - valuePrev)
+        else:
+            self.valueFunction[key] = self.valueFunction.get(key, 0) + self.alpha * reward
+
+    def getReward(self, board):
+        if board.isGameWon(self.letter):
+            return 1
+        elif board.isGameDraw():
+            return 0
+        else:
+            return 0  # No reward for ongoing game
+
+    def valueOfState(self, key):
+        return self.valueFunction.get(key, 0)  # Default value is 0 if state not found
+elf, board):
         if self.mode == TRAINING_MODE:
             n = random.random()
             if n < self.epsilon:
