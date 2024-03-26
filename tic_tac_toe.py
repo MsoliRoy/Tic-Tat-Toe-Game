@@ -1,15 +1,15 @@
 class TicTacToe:
-    BOARD_SIZE = 3
-
-    def __init__(self):
-        self.board = [[' ' for _ in range(self.BOARD_SIZE)] for _ in range(self.BOARD_SIZE)]
+    def __init__(self, board_size=3, win_condition=3):
+        self.board_size = board_size
+        self.win_condition = win_condition
+        self.board = [[' ' for _ in range(board_size)] for _ in range(board_size)]
         self.players = []
 
     def draw_board(self):
         """Draw the current state of the game board."""
         for row in self.board:
             print("|".join(row))
-            print("-" * (self.BOARD_SIZE * 2 - 1))
+            print("-" * (self.board_size * 2 - 1))
 
     def get_key(self, letter):
         """Generate a key representing the state of the board."""
@@ -33,7 +33,7 @@ class TicTacToe:
         for row in self.board:
             if row[0] == row[1] == row[2] != ' ':
                 return row[0]
-        for col in range(self.BOARD_SIZE):
+        for col in range(self.board_size):
             if self.board[0][col] == self.board[1][col] == self.board[2][col] != ' ':
                 return self.board[0][col]
         if self.board[0][0] == self.board[1][1] == self.board[2][2] != ' ':
@@ -51,23 +51,25 @@ class TicTacToe:
 
     def is_game_over(self):
         """Check if the game is over."""
-        return self.get_winner() is not None or self.is_game_draw()
+        return self.get_winner() is not None or not self.is_game_draw()
 
     def is_game_won(self, mark):
         """Check if the game is won by a specific player."""
         return self.get_winner() == mark
 
-    def is_same_as(self, char, a, b, c):
+    def is_same_as(self, char, cell1, cell2, cell3):
         """Check if all provided characters are the same."""
-        return a == b == c == char
+        return cell1 == cell2 == cell3 == char
 
-    def make_move(self, location, mark):
+    def makeMove(self, location, mark):
         """Make a move on the board."""
         x, y = location
-        if 1 <= x <= self.BOARD_SIZE and 1 <= y <= self.BOARD_SIZE and self.board[x - 1][y - 1] == ' ':
-            self.board[x - 1][y - 1] = mark
-            return True
-        return False
+        if not isinstance(x, int) or not isinstance(y, int) or x < 1 or x > 3 or y < 1 or y > 3:
+            raise ValueError("Invalid move coordinates. Please enter valid integers within the range [1, 3].")
+        if self.board[x - 1][y - 1] != ' ':
+            raise ValueError("Selected position is already occupied. Please choose an empty position.")
+        self.board[x - 1][y - 1] = mark
+        return True if self.isGameOver() else False
 
     def next_player(self):
         """Get the next player to make a move."""
